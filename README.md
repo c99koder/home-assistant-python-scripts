@@ -22,7 +22,7 @@ Sets values on a light only if the light is already on
 
 Example:
 ```yaml
-service: python_script.color_cycle
+service: python_script.set_light_if_on
 data:
   entity_id:
     - light.living_room
