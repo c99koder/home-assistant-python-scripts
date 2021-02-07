@@ -8,13 +8,13 @@ Example:
 ```yaml
 service: python_script.color_cycle
 data:
-	entity_id: light.living_room
-	colors:
-	  - red
-	  - green
-	  - [0,0,255]
-	  - orange
-	  - purple
+  entity_id: light.living_room
+  colors:
+    - red
+    - green
+    - [0,0,255]
+    - orange
+    - purple
 ```
 
 ## set_light_if_on
@@ -24,9 +24,9 @@ Example:
 ```yaml
 service: python_script.color_cycle
 data:
-	entity_id:
-	  - light.living_room
-	  - light.kitchen
-	  - light.bedroom
-	rgb_color: [255,255,255]
+  entity_id:
+    - light.living_room
+    - light.kitchen
+    - light.bedroom
+  rgb_color: [255,255,255]
 ```
