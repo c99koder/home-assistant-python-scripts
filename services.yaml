@@ -15,8 +15,8 @@ set_light_if_state:
       description: Name(s) of entities to turn on
       example: "light.kitchen"
     new_state:
-      description: The action to perform
-      example: "turn_on"
+      description: The new state of the device
+      example: "on"
     old_state:
       description: The old state of the device
       example: "off"
