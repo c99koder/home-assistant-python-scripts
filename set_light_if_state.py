@@ -6,7 +6,6 @@ if isinstance(entity_id, str) and "," in entity_id:
 light_data = {}
 for k, v in data.items():
 	if k not in('old_state', 'new_state'):
-		logger.warning("k: %s v: %s", k, v)
 		light_data[k] = v
 
 entities = []
