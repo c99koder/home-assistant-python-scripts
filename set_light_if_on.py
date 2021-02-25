@@ -5,7 +5,7 @@ def set_entity(entity_id, light_data):
 		hass.services.call("light", "turn_on", light_data, False)
 
 entity_id = data.get("entity_id")
-if "," in entity_id:
+if isinstance(entity_id, str) and "," in entity_id:
     entity_id = entity_id.split(",")
 
 light_data = {}
