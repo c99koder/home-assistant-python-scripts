@@ -8,12 +8,18 @@ color_cycle:
       description: Name(s) or RGB values of colors in the cycle
       example: "[red,orange,yellow,[0,255,0],blue]"
 
-set_light_if_on:
-  description: Set the values of a light only if it's already on
+set_light_if_state:
+  description: Set the values of a light only if it's in a specific state
   fields:
     entity_id:
       description: Name(s) of entities to turn on
       example: "light.kitchen"
+    action:
+      description: The action to perform
+      example: "turn_on"
+    state:
+      description: The old state of the device
+      example: "off"
     transition:
       description: Duration in seconds it takes to get to next state
       example: 60
