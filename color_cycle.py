@@ -182,32 +182,45 @@ def color_RGB_to_hs(iR: float, iG: float, iB: float):
 def convert_scale(value, value_scale, target_scale, round_digits=4):
     return round(value * target_scale / value_scale, round_digits)
 
+def color_cycle(entity_id, colors):
+    if entity_id is not None and colors is not None and hass.states.is_state(entity_id, 'on'):
+        if 'hs_color' in hass.states.get(entity_id).attributes:
+            current_color = hass.states.get(entity_id).attributes['hs_color']
+        else:
+            current_color = [0,0]
+        current_color = (convert_scale(current_color[0], 360, 100, 0), current_color[1]) #workaround for SmartThings range limitation
+        color_index = 0
+        for color in colors:
+            if isinstance(color, str):
+                color = COLORS.get(color.replace(" ", "").lower())
+
+            color = color_RGB_to_hs(float(color[0]), float(color[1]), float(color[2]))
+            color = (convert_scale(color[0], 360, 100, 0), color[1]) #workaround for SmartThings range limitation
+
+            # Work around rounding issues
+            if color[1] == current_color[1] and color[0] <= current_color[0] + 1 and color[0] >= current_color[0] - 1:
+                break
+            color_index = color_index + 1
+
+        color_index = color_index + 1
+        if color_index >= len(colors):
+            color_index = 0
+
+        color = colors[color_index]
+        if isinstance(color, str):
+            color = COLORS.get(color.replace(" ", "").lower())
+        
+        color = color_RGB_to_hs(float(color[0]), float(color[1]), float(color[2]))
+        hass.services.call("light", "turn_on", {"entity_id": entity_id, "hs_color": color}, False)
+
 entity_id = data.get("entity_id")
+if isinstance(entity_id, str) and "," in entity_id:
+    entity_id = entity_id.split(",")
+
 colors = data.get("colors")
 
-if entity_id is not None and colors is not None and hass.states.is_state(entity_id, 'on'):
-	current_color = hass.states.get(entity_id).attributes['hs_color']
-	current_color = (convert_scale(current_color[0], 360, 100, 0), current_color[1]) #workaround for SmartThings range limitation
-	color_index = 0
-	for color in colors:
-		if isinstance(color, str):
-			color = COLORS.get(color.replace(" ", "").lower())
-
-		color = color_RGB_to_hs(float(color[0]), float(color[1]), float(color[2]))
-		color = (convert_scale(color[0], 360, 100, 0), color[1]) #workaround for SmartThings range limitation
-
-		# Work around rounding issues
-		if color[1] == current_color[1] and color[0] <= current_color[0] + 1 and color[0] >= current_color[0] - 1:
-			break
-		color_index = color_index + 1
-
-	color_index = color_index + 1
-	if color_index >= len(colors):
-		color_index = 0
-
-	color = colors[color_index]
-	if isinstance(color, str):
-		color = COLORS.get(color.replace(" ", "").lower())
-	
-	color = color_RGB_to_hs(float(color[0]), float(color[1]), float(color[2]))
-	hass.services.call("light", "turn_on", {"entity_id": entity_id, "hs_color": color}, False)
+if isinstance(entity_id, str):
+    color_cycle(entity_id, colors)
+else:
+    for entity in entity_id:
+        color_cycle(entity.strip(), colors)
